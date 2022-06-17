@@ -3,14 +3,14 @@
 
 #include <string>
 #include <queue>
-#include <semaphore.h>
+#include "CountingSemaphore.h"
 
-class BoundedQueue{
+class BoundedQueue {
 private:
-    sem_t full{};
-    sem_t empty{};
-    sem_t mutex{};
-    std:: queue<std::string> queue;
+    CountingSemaphore full;
+    CountingSemaphore empty;
+    CountingSemaphore mutex;
+    std::queue<std::string> queue;
 public:
     explicit BoundedQueue(int size);
 

@@ -2,26 +2,24 @@
 #include "UnboundedQueue.h"
 #include "iostream"
 
-UnboundedQueue::UnboundedQueue() {
-    sem_init(&this->full, 0, 0);
-    sem_init(&this->mutex, 0, 1);
+UnboundedQueue::UnboundedQueue() : full(0), mutex(1) {
     this->queue = std::queue<std::string>();
 }
 
 
 void UnboundedQueue::insert(const std::string &str) {
-    sem_wait(&this->mutex);
+    mutex.down();
     this->queue.push(str);
-    sem_post(&this->mutex);
-    sem_post(&this->full);
+    mutex.up();
+    full.up();
 }
 
-std::string UnboundedQueue ::remove() {
+std::string UnboundedQueue::remove() {
     std::string str;
-    sem_wait(&this->full);
-    sem_wait(&this->mutex);
+    full.down();
+    mutex.down();
     str = this->queue.front();
     this->queue.pop();
-    sem_post(&this->mutex);
+    mutex.up();
     return str;
 }
