@@ -25,6 +25,7 @@ void getParams(int *pid, int *first, int *operation, int *second) {
 }
 
 void clientHandler(int sig) {
+    signal(SIGUSR1,clientHandler);
     int pid = fork();
     if (pid){
         return;
@@ -55,6 +56,7 @@ void clientHandler(int sig) {
     fprintf(f, "%d\n", result);
     fclose(f);
     kill(clientPid, SIGUSR1);
+    exit(0);
 }
 
 
