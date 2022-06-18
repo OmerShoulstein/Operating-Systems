@@ -8,9 +8,8 @@ using namespace std;
 class CountingSemaphore {
 private:
     int m_value;
-    const int m_startValue;
-    mutex m_mutex_s;
-    mutex m_delay_s;
+    mutex lock_mutex;
+    mutex delay_mutex;
 
 public:
     CountingSemaphore(int startValue);
@@ -18,10 +17,6 @@ public:
     void down();
 
     void up();
-
-    int value();
-
-    void setValue(int value);
 };
 
 #endif

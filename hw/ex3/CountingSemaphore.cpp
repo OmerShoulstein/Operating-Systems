@@ -1,34 +1,26 @@
 #include "CountingSemaphore.h"
 
-CountingSemaphore::CountingSemaphore(int startValue) : m_value(startValue), m_startValue(startValue) {
-    m_delay_s.lock();
+CountingSemaphore::CountingSemaphore(int startValue) : m_value(startValue) {
+    delay_mutex.lock();
 }
 
 void CountingSemaphore::down() {
-    m_mutex_s.lock();
+    lock_mutex.lock();
     m_value--;
     if (m_value < 0) {
-        m_mutex_s.unlock();
-        m_delay_s.lock();
+        lock_mutex.unlock();
+        delay_mutex.lock();
     }
 
-    m_mutex_s.unlock();
+    lock_mutex.unlock();
 }
 
 void CountingSemaphore::up() {
-    m_mutex_s.lock();
+    lock_mutex.lock();
     m_value++;
     if (m_value <= 0) {
-        m_delay_s.unlock();
+        delay_mutex.unlock();
     } else {
-        m_mutex_s.unlock();
+        lock_mutex.unlock();
     }
-}
-
-int CountingSemaphore::value() {
-    return m_value;
-}
-
-void CountingSemaphore::setValue(int value) {
-    m_value = value;
 }
