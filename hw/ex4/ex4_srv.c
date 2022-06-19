@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <string.h>
 
 void timeout(int sig) {
     printf("The server was closed because no service request was received for the last 60 seconds.\n");
@@ -22,6 +23,7 @@ void getParams(int *pid, int *first, int *operation, int *second) {
     getline(&line, &len, f);
     *second = atoi(line);
     fclose(f);
+    remove("to_srv");
 }
 
 void clientHandler(int sig) {
@@ -52,7 +54,10 @@ void clientHandler(int sig) {
             break;
     }
     FILE *f;
-    f = fopen("to_srv", "w");
+    char clientFile[16];
+    strcpy(clientFile, "to_client_");
+    sprintf(clientFile + strlen(clientFile), "%d", clientPid);
+    f = fopen(clientFile, "w");
     fprintf(f, "%d\n", result);
     fclose(f);
     kill(clientPid, SIGUSR1);
@@ -61,7 +66,6 @@ void clientHandler(int sig) {
 
 
 int main() {
-    remove("to_srv");
     printf("%d\n", getpid());
     signal(SIGALRM, timeout);
     signal(SIGUSR1, clientHandler);
