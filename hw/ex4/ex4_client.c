@@ -46,10 +46,7 @@ int main(int argc, char *argv[]) {
     }
     alarm(30);
     f = fopen("to_srv", "w");
-    fprintf(f, "%d\n", getpid());
-    fprintf(f, "%d\n", firstArg);
-    fprintf(f, "%d\n", operation);
-    fprintf(f, "%d\n", secondArg);
+    fprintf(f, "%d\n%d\n%d\n%d\n", getpid(), firstArg, operation, secondArg);
     fclose(f);
     signal(SIGALRM, timeout);
     signal(SIGUSR1, getAnswer);

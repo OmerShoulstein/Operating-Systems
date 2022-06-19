@@ -38,6 +38,11 @@ void clientHandler(int sig) {
     if (0 == clientPid) {
         return;
     }
+    FILE *f;
+    char clientFile[16];
+    strcpy(clientFile, "to_client_");
+    sprintf(clientFile + strlen(clientFile), "%d", clientPid);
+    f = fopen(clientFile, "w");
     int result;
     switch (operation) {
         case 1:
@@ -50,14 +55,15 @@ void clientHandler(int sig) {
             result = first * second;
             break;
         case 4:
+            if (second == 0) {
+                fprintf(f, "ERROR_FROM_EX4\n");
+                fclose(f);
+                kill(clientPid, SIGUSR1);
+                exit(1);
+            }
             result = first / second;
             break;
     }
-    FILE *f;
-    char clientFile[16];
-    strcpy(clientFile, "to_client_");
-    sprintf(clientFile + strlen(clientFile), "%d", clientPid);
-    f = fopen(clientFile, "w");
     fprintf(f, "%d\n", result);
     fclose(f);
     kill(clientPid, SIGUSR1);
