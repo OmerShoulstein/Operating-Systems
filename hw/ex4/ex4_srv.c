@@ -56,7 +56,7 @@ void clientHandler(int sig) {
             break;
         case 4:
             if (second == 0) {
-                fprintf(f, "ERROR_FROM_EX4\n");
+                fprintf(f, "CANNOT_DIVIDE_BY_ZERO\n");
                 fclose(f);
                 kill(clientPid, SIGUSR1);
                 exit(1);

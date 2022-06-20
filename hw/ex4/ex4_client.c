@@ -6,6 +6,7 @@
 
 void timeout(int sig) {
     printf("The client was closed because no service request was received for the last 30 seconds.\n");
+    remove("to_srv");
     exit(0);
 }
 
@@ -31,6 +32,10 @@ int main(int argc, char *argv[]) {
     int serverPid = atoi(argv[1]);
     int firstArg = atoi(argv[2]);
     int operation = atoi(argv[3]);
+    if (operation < 1 || operation > 4) {
+        printf("ERROR_FROM_EX4\n");
+        exit(1);
+    }
     int secondArg = atoi(argv[4]);
     FILE *f;
     int tries = 0;
