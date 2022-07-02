@@ -5,6 +5,10 @@
 #include <signal.h>
 #include <string.h>
 
+void clearZombies() {
+    while (wait(NULL) != -1) {}
+}
+
 void timeout(int sig) {
     printf("The server was closed because no service request was received for the last 60 seconds.\n");
     exit(0);
@@ -14,12 +18,15 @@ void getParams(int *pid, int *first, int *operation, int *second) {
     FILE *f;
     f = fopen("to_srv", "r");
     char *line = NULL;
-    size_t len;
+    size_t len = 0;
     getline(&line, &len, f);
+    len = 0;
     *pid = atoi(line);
     getline(&line, &len, f);
+    len = 0;
     *first = atoi(line);
     getline(&line, &len, f);
+    len = 0;
     *operation = atoi(line);
     getline(&line, &len, f);
     *second = atoi(line);
@@ -28,9 +35,9 @@ void getParams(int *pid, int *first, int *operation, int *second) {
 }
 
 void clientHandler(int sig) {
-    signal(SIGUSR1,clientHandler);
+    signal(SIGUSR1, clientHandler);
     int pid = fork();
-    if (pid){
+    if (pid) {
         return;
     }
     signal(SIGUSR1, clientHandler);
@@ -46,24 +53,24 @@ void clientHandler(int sig) {
     f = fopen(clientFile, "w");
     int result;
     switch (operation) {
-        case 1:
-            result = first + second;
-            break;
-        case 2:
-            result = first - second;
-            break;
-        case 3:
-            result = first * second;
-            break;
-        case 4:
-            if (second == 0) {
-                fprintf(f, "CANNOT_DIVIDE_BY_ZERO\n");
-                fclose(f);
-                kill(clientPid, SIGUSR1);
-                exit(1);
-            }
-            result = first / second;
-            break;
+    case 1:
+        result = first + second;
+        break;
+    case 2:
+        result = first - second;
+        break;
+    case 3:
+        result = first * second;
+        break;
+    case 4:
+        if (second == 0) {
+            fprintf(f, "CANNOT_DIVIDE_BY_ZERO\n");
+            fclose(f);
+            kill(clientPid, SIGUSR1);
+            exit(1);
+        }
+        result = first / second;
+        break;
     }
     fprintf(f, "%d\n", result);
     fclose(f);
@@ -73,7 +80,6 @@ void clientHandler(int sig) {
 
 
 int main() {
-    printf("%d\n", getpid());
     signal(SIGALRM, timeout);
     signal(SIGUSR1, clientHandler);
     while (1) {

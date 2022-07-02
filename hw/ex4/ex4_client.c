@@ -18,7 +18,7 @@ void getAnswer(int sig) {
     FILE *f;
     f = fopen(clientFile, "r");
     char *line = NULL;
-    size_t len;
+    size_t len = 0;
     getline(&line, &len, f);
     fclose(f);
     printf("%s", line);
